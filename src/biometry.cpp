@@ -167,6 +167,7 @@ decltype(Biometry::brightness) Biometry::get_brightness()
 void Biometry::set_brightness(decltype(Biometry::brightness) value)
 {
     brightness = value;
+    beat_sensor.setPulseAmplitudeRed(value);
 }
 
 decltype(Biometry::sample_average) Biometry::get_sample_average()

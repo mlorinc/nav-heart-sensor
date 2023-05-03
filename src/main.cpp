@@ -11,7 +11,7 @@
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, MOSI_PIN, SCLK_PIN, DC_PIN, RST_PIN, CS_PIN);
 MAX30105 beat_sensor;
 Biometry biometry(std::move(beat_sensor));
-Encoder encoder(ENCODER_SW, ENCODER_DT, ENCODER_CLK);
+Encoder encoder(LEFT_BUTTON_PIN, CENTER_BUTTON_PIN, RIGHT_BUTTON_PIN);
 
 bool bpm_on = true;
 bool o2_on = true;
@@ -37,8 +37,13 @@ void display_measurement_biometry(bool status)
     display.setTextSize(2);
     display.setTextColor(WHITE);
     display.setCursor(0, 0);
-    display.printf("BPM: %d\n", biometry.get_bpm());
-    display.printf("O2: %d\n", biometry.get_o2());
+    
+    if (bpm_on) {
+        display.printf("BPM: %d\n", biometry.get_bpm());
+    }
+    if (o2_on) {
+        display.printf("O2: %d\n", biometry.get_o2());
+    }
 
     if (status) {
         display.setTextSize(1);
@@ -86,14 +91,15 @@ void display_setting(Setting &setting) {
         display.printf(": %d\n", setting.value);
     }
     else {
+        display.printf("\n");
         for (size_t i = 0; i < setting.options.size(); i++)
         {
             if (i == setting.active_option)
             {
-                display.printf("> %s\n", setting.options[i]);
+                display.printf("> %s\n", setting.options[i].c_str());
             }
             else {
-                display.printf("  %s\n", setting.options[i]);
+                display.printf("  %s\n", setting.options[i].c_str());
             }
         } 
     }
@@ -119,6 +125,7 @@ void loop()
         biometry.set_sample_average(result.sample_average);
         bpm_on = result.bpm_on;
         o2_on = result.o2_on;
+        Serial.printf("bright: %d, sample_avg: %d, bpm: %d, o2: %d\n", result.brightness,result.sample_average, bpm_on, o2_on);
         encoder.reset();
     }
     else if (encoder.is_configuration_in_progress()) {

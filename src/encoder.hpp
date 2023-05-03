@@ -3,14 +3,14 @@
 #include <stdint.h>
 #include <string>
 
-constexpr int8_t ENCODER_SW = 34;
-constexpr int8_t ENCODER_DT = 36;
-constexpr int8_t ENCODER_CLK = 39;
+constexpr int8_t LEFT_BUTTON_PIN = 34;
+constexpr int8_t CENTER_BUTTON_PIN = 36;
+constexpr int8_t RIGHT_BUTTON_PIN = 35;
 
 struct EncoderSettings {
     bool bpm_on;
     bool o2_on;
-    uint8_t brightness;
+    uint16_t brightness;
     uint8_t sample_average;
 };
 
@@ -28,9 +28,7 @@ enum EncoderState {
 
 class Encoder {
     private:
-        const int8_t sw;
-        const int8_t dt;
-        const int8_t clk;
+        const int8_t left_button_pin, center_button_pin, right_button_pin;
         int last_encoder_state;
         int value;
         EncoderSettings settings;
@@ -38,7 +36,8 @@ class Encoder {
         Setting current_setting;
 
     public:
-        Encoder(int8_t sw, int8_t dt, int8_t clk) : sw(sw), dt(dt), clk(clk), state(EncoderState::LISTENING) {}
+        Encoder(int8_t left, int8_t center, int8_t right) : 
+            left_button_pin(left), center_button_pin(center), right_button_pin(right), state(EncoderState::LISTENING) {}
         void begin();
         void event_loop_tick(EncoderSettings biometry_settings);
         bool has_result();
