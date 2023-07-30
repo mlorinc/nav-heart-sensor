@@ -66,8 +66,6 @@ void Biometry::pop_front(int count, int size)
 
 void Biometry::begin()
 {
-    // byte led_brightness = 0x0a; // Option: 0=Off to 255=50mA
-    //  byte sample_average = 4;    // Option: 1, 2, 4, 8, 16, 32
     byte led_mode = 2;     // Option: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
     int sample_rate = 100; // Option: 50, 100, 200, 400, 800, 1000, 1600, 3200
     int pulse_width = 411; // Option: 69, 118, 215, 411

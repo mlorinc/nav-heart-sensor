@@ -4,9 +4,9 @@
 
 void Encoder::begin()
 {
-    pinMode(left_button_pin, INPUT_PULLDOWN);
-    pinMode(center_button_pin, INPUT_PULLDOWN);
-    pinMode(right_button_pin, INPUT_PULLDOWN);
+    pinMode(left_button_pin, INPUT);
+    pinMode(center_button_pin, INPUT);
+    pinMode(right_button_pin, INPUT);
 }
 
 // LISTENING, BRIGHTNESS, SAMPLE_AVERAGE, BPM_ON, O2_ON, FINALIZE
@@ -14,18 +14,21 @@ void Encoder::event_loop_tick(EncoderSettings biometry_settings)
 {
     auto left = digitalRead(left_button_pin);
     auto center = digitalRead(center_button_pin);
-    // auto right = digitalRead(right_button_pin);
+    auto right = digitalRead(right_button_pin);
     
     auto temp_left = left;
     auto temp_center = center;
-
-    while (temp_left || temp_center)
+    auto temp_right = right;
+    auto start = 0;
+    Serial.printf("%d, %d, %d\n", temp_left, temp_center, temp_right);
+    while (temp_left || temp_center || temp_right)
     {
-        Serial.printf("%d, %d\n", temp_left, temp_center);
+        start++;
+        Serial.printf("%d, %d, %d\n", temp_left, temp_center, temp_right);
         delay(50);
         temp_left = digitalRead(left_button_pin);
         temp_center = digitalRead(center_button_pin);
-        // right = digitalRead(right_button_pin);
+        temp_right = digitalRead(right_button_pin);
     }
     
     int direction;
@@ -33,18 +36,19 @@ void Encoder::event_loop_tick(EncoderSettings biometry_settings)
     {
         direction = -1;
     }
-    else if (center) {
+    else if (right) {
         direction = 1;
     }
     else {
         direction = 0;
     }
 
-    auto next = left && center;
+    auto next = center;
 
     if (next) {
         left = 0;
         center = 0;
+        right = 0;
         direction = 0;
     }
 
